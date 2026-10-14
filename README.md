@@ -1,99 +1,101 @@
-# Virtue Agent
+<h1 align="center">Virtue Agent</h1>
+<p align="center"><strong>Understanding, Evaluating, and Enforcing AI Agent Safety</strong></p>
+<p align="center"><em>Research on safe and trustworthy behavior in autonomous AI agents</em></p>
 
-### 从“知道什么是安全的”，走向“真正安全地行动”
-
-**Virtue Agent** 是一组围绕 AI Agent 安全展开的研究工作。我们关注一个核心问题：
-
-> 当大语言模型从“回答问题”走向“执行动作”之后，已有的安全知识、判断与约束，是否真的能够转化为可靠的安全行为？
-
-当前项目围绕三条相互衔接的研究主线展开：**Measure → Understand → Govern**。
+<p align="center"><strong>English</strong> · <a href="./README.zh-CN.md">简体中文</a></p>
 
 ---
 
-## 🧭 Research Roadmap
+## About Virtue Agent
 
-| 方向 | 工作 | 核心问题 |
+**Virtue Agent** is a long-term research initiative on AI agent safety. We study unsafe behaviors that can emerge as agents use tools, access information, interact with software, and execute user tasks autonomously.
+
+Our interest goes beyond whether an agent can **recognize** a safety concern: we also ask whether safety-relevant information affects actual choices, why explicit safety judgments sometimes fail to govern behavior, and how constraints can be enforced at critical action and information-release boundaries.
+
+Our five current projects are organized around three complementary research activities: **Evaluate → Understand → Enforce**. This is a way to connect our current work, not a claim to cover every aspect of AI safety or security. Each project page includes a dedicated **Research Scope** section that identifies its setting, contributions, and limitations.
+
+## Research Directions
+
+| Direction | Central question | Current projects |
 | --- | --- | --- |
-| **Measure** | [SameFact](./SameFact.md) | 同一条安全事实，在不同响应界面中是否会产生一致影响？ |
-| **Understand** | [Says Block, Still Acts](./Says-Block-Still-Acts.md) | 为什么模型明明判断“应该阻止”，却仍然偏好执行？ |
-| **Govern** | [OpenAgentFlow](./OpenAgentFlow.md) | 如何在动作真正执行之前建立统一、系统级的安全边界？ |
+| **01 · Evaluate** | How should we measure the safety of agent actions and permission decisions beyond task success or stated judgments? | [“Allow” to Achieve](./Allow-to-Achieve.md) · [SameFact](./SameFact.md) |
+| **02 · Understand** | Why can an agent recognize a hazard yet still prefer an unsafe action? | [Says Block, Still Acts](./Says-Block-Still-Acts.md) |
+| **03 · Enforce** | How can safety constraints be applied at action-commit and information-release boundaries? | [OpenAgentFlow](./OpenAgentFlow.md) · [Purpose IR](./Purpose-IR.md) |
 
 ---
 
-## 🧠 SameFact
+## Research Projects
 
-### 同一安全事实，为何在不同响应界面下产生不同响应？
+### 01 · Evaluate — Behavioral Safety Evaluation
 
-**SameFact: The Same Safety Facts Lead to Different Responses Across Interfaces**
+#### “Allow” to Achieve — Permission decisions in mobile GUI agents
 
-SameFact 研究安全评测中的一个基础问题：**模型在显式安全判断中对风险高度敏感，是否意味着同样的安全事实也会稳定影响它的真实行动选择？**
+> **Completing a task is not the same as obtaining authorization.**
 
-<p align="center">
-  <img src="./assets/samefact/overview.svg" width="96%" alt="SameFact overview">
-</p>
+We investigate whether task-driven mobile GUI agents grant unnecessary permissions when handling system pop-ups. The work studies permission literacy, app-trust bias, task-prior effects, and the trade-off between reducing over-granting and preserving legitimate task-enabling permissions.
 
-通过 300 对严格匹配的 safe / unsafe 反事实样本，SameFact 在同一个候选动作边界上比较 **Judgment、Checkpoint Admission 与 Open First-Action Selection**，揭示安全事实从“判断”走向“行动”时并不会简单、稳定地保持其影响。
+<p align="center"><img src="./assets/allow-to-achieve/permission_example.png" width="92%" alt="Mobile GUI permission over-granting example"></p>
 
-**[→ 查看 SameFact 完整项目页](./SameFact.md)** · **[arXiv](https://arxiv.org/abs/2609.35872)**
+[**Explore the project →**](./Allow-to-Achieve.md) · [Paper / arXiv](https://arxiv.org/abs/2608.04755)
 
----
+#### SameFact — The same safety fact across different interfaces
 
-## ⚠️ Says Block, Still Acts
+> **Correctly judging risk does not mean acting on it.**
 
-### 模型明明说“BLOCK”，为什么仍然会选择行动？
+SameFact compares 300 matched safe/unsafe counterfactual pairs across explicit safety judgments, checkpoint admission, and open first-action selection. It examines whether the same factual change retains its influence when the response interface changes.
 
-**Says Block, Still Acts: Why LLM Safety Judgments Fail to Govern Action in LLM Agents**
+<p align="center"><img src="./assets/samefact/overview.svg" width="92%" alt="SameFact matched-counterfactual benchmark"></p>
 
-这项工作进一步追问 SameFact 背后的机制问题：如果模型能够正确识别风险，那么为什么安全判断仍然无法稳定约束行动？
+[**Explore the project →**](./SameFact.md) · [Paper / arXiv](https://arxiv.org/abs/2609.35872)
 
-<p align="center">
-  <img src="./assets/says-block-still-acts/overview.svg" width="96%" alt="Says Block, Still Acts overview">
-</p>
+### 02 · Understand — Mechanisms of Safety Failure
 
-我们的分析区分了两个概念：**安全信息是否存在（information availability）**，以及这些信息是否真正拥有改变行动的**因果控制力（causal authority）**。结果显示，模型可以保留可读取的安全信息，同时让支持安全判断的控制方向对实际行动几乎不起作用。
+#### Says Block, Still Acts — Why safety judgments fail to govern action
 
-**[→ 查看 Says Block, Still Acts 完整项目页](./Says-Block-Still-Acts.md)** · **[arXiv](https://arxiv.org/abs/2609.35870)**
+> **A model may say “BLOCK” and still prefer the target action.**
 
----
+Through cross-interface probing, causal interventions, and control-subspace analysis, we examine why safety information can remain readable in action states while judgment-related computations exert limited causal control over action selection.
 
-## 🛡️ OpenAgentFlow
+<p align="center"><img src="./assets/says-block-still-acts/overview.svg" width="92%" alt="Judgment–action disconnect"></p>
 
-### 为异构 AI Agent 建立系统级、可执行的统一安全边界
+[**Explore the project →**](./Says-Block-Still-Acts.md) · [Paper / arXiv](https://arxiv.org/abs/2609.35870)
 
-**OpenAgentFlow: Enabling System-Wide Safety Boundaries for Heterogeneous AI Agent Fleets**
+### 03 · Enforce — Executable Safety Boundaries
 
-如果安全判断本身不能被默认视为行动保证，那么还需要一个系统层面的安全边界。OpenAgentFlow 将治理位置放在 Agent 真正改变外部环境之前的 **action-commit boundary**。
+#### OpenAgentFlow — Pre-execution safety for heterogeneous agents
 
-<p align="center">
-  <img src="./assets/openagentflow/system_pipeline.svg" width="96%" alt="OpenAgentFlow system pipeline">
-</p>
+> **Govern the action, not just the agent.**
 
-OpenAgentFlow 将 GUI、API、工具调用与 LLM-generated invocation 统一为可治理的 `AgentEvent`，并通过共享的 **Policy Enforcement Point (PEP)** 在执行前进行规则、provenance、语义与会话级检查。
+OpenAgentFlow normalizes heterogeneous GUI, API, tool, and model-generated operations as `AgentEvent`s and routes them through a shared Policy Enforcement Point (PEP) before actions are committed. The system incorporates session provenance, policy updates, and auditable decisions.
 
-**[→ 查看 OpenAgentFlow 完整项目页](./OpenAgentFlow.md)** · **[arXiv](https://arxiv.org/abs/2609.00015)**
+<p align="center"><img src="./assets/openagentflow/system_pipeline.svg" width="92%" alt="OpenAgentFlow architecture"></p>
 
----
+[**Explore the project →**](./OpenAgentFlow.md) · [Paper / arXiv](https://arxiv.org/abs/2609.00015)
 
-## 🔗 Three Works, One Question
+#### Purpose IR — Controlling reusable agent state through user purpose
 
-三项工作共同围绕同一个问题展开：
+> **Authority to access evidence is not authority to retain it.**
 
-> **我们如何让 AI Agent 不只是“知道什么是安全的”，而是真正“安全地行动”？**
+Purpose IR compiles user intent into typed semantic dependencies and explicit release sinks, so downstream reusable states are reconstructed from authorized outputs rather than from the full task observation. This targets unnecessary disclosure through plans, summaries, memories, and handoffs.
 
-- **SameFact**：测量安全事实能否从判断迁移到行动；
-- **Says Block, Still Acts**：解释为什么安全判断可能缺乏行动控制力；
-- **OpenAgentFlow**：在系统执行层建立统一、可审计的安全治理边界。
+<p align="center"><img src="./assets/purpose-ir/architecture.svg" width="92%" alt="Purpose IR architecture"></p>
+
+[**Explore the project →**](./Purpose-IR.md) · [Paper / arXiv](https://arxiv.org/abs/2610.16414)
 
 ---
 
-## 📌 Repository Status
+## Publications
 
-本仓库当前作为 **Virtue Agent** 系列工作的研究展示与项目主页，集中介绍论文问题、方法、关键发现与系统设计。
+| Work | arXiv | Project page |
+| --- | --- | --- |
+| “Allow” to Achieve | [2608.04755](https://arxiv.org/abs/2608.04755) | [Read](./Allow-to-Achieve.md) |
+| SameFact | [2609.35872](https://arxiv.org/abs/2609.35872) | [Read](./SameFact.md) |
+| Says Block, Still Acts | [2609.35870](https://arxiv.org/abs/2609.35870) | [Read](./Says-Block-Still-Acts.md) |
+| OpenAgentFlow | [2609.00015](https://arxiv.org/abs/2609.00015) | [Read](./OpenAgentFlow.md) |
+| Purpose IR | [2610.16414](https://arxiv.org/abs/2610.16414) | [Read](./Purpose-IR.md) |
 
-**当前仓库不包含研究代码。**
+## Repository Status
 
----
+This repository is a **public research showcase** containing project descriptions, figures, results, and paper links. **Research source code and datasets are not released here at this stage.** Numerical results refer to the evaluation settings of the respective papers and should not be treated as directly comparable across projects.
 
-<p align="center">
-  <b>Virtue Agent · From knowing what is safe to acting safely.</b>
-</p>
+<p align="center"><a href="./README.zh-CN.md">中文版</a> · Virtue Agent</p>
